@@ -7,25 +7,34 @@ import com.spring.dmaker.type.DeveloperSkillType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import javax.transaction.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class DMakerService {
     private final DeveloperRepository developerRepository;
-    // DeveloperRepository 를 자동으로 developerRepository에 인젝션해주게 된다
+    private final EntityManager em; // db를 추상화한것
 
-    // 만들어진 생성자를 통해서 새로운 developer를 생성하기
-    @Transactional // 엔티티 생성
-    public void createDeveloper(){
-        Developer developer = Developer.builder()
-                .developerLevel(DeveloperLevel.JUNIOR)
-                .developerSkillType(DeveloperSkillType.FRONT_END)
-                .experienceYears(2)
-                .name("Olaf")
-                .age(5)
-                .build(); // 각각의 데이터들을 세팅후 build
-        // 엔티티를 save를 통해 영속화 (저장)
-        developerRepository.save(developer); //developerRepository를 통해 DB에 저장
+    @Transactional
+    public void createDeveloper() {
+        EntityTransaction transaction = em.getTransaction();
+
+
+            // business logic start
+            Developer developer = Developer.builder()
+                    .developerLevel(DeveloperLevel.JUNIOR)
+                    .developerSkillType(DeveloperSkillType.FRONT_END)
+                    .experienceYears(2)
+                    .name("OLAF")
+                    .build();
+
+            // a->b 계좌로 1만원 송금
+            // A 계좌에서 1만원 줄임
+            developerRepository.save(developer);
+            // B 계좌에서 1만원 늘림
+            // business logic end
+
     }
 }
